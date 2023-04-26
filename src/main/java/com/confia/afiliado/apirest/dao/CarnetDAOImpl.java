@@ -1,8 +1,6 @@
 package com.confia.afiliado.apirest.dao;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -11,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.CallableStatementCreatorFactory;
@@ -18,8 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ResourceUtils;
-
 import com.confia.afiliado.apirest.model.Carnet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -121,12 +118,16 @@ public class CarnetDAOImpl implements CarnetDAO {
 	}
 
 	@Override
-	public String exportReport(String id) throws FileNotFoundException, JRException, SQLException {
+	public String exportReport(String id) throws JRException, SQLException, IOException {
 		
 		//se obtiene el jrxml que es parte del proyecto
-		File inputFile = ResourceUtils.getFile("classpath:carnet.jrxml");
+		//File inputFile = ResourceUtils.getFile("classpath:carnet.jrxml"); 
 		
-		InputStream inputStream = new FileInputStream(inputFile.getAbsoluteFile());
+		ClassPathResource classPathResource = new ClassPathResource("carnet.jrxml");
+		
+		InputStream inputStream = classPathResource.getInputStream();
+		
+		//InputStream inputStream = new FileInputStream(inputFile.getAbsoluteFile());
 		
 		JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
 		
