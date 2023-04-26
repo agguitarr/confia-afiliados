@@ -124,7 +124,7 @@ public class CarnetDAOImpl implements CarnetDAO {
 	public String exportReport(String id) throws FileNotFoundException, JRException, SQLException {
 		
 		//se obtiene el jrxml que es parte del proyecto
-		File inputFile = ResourceUtils.getFile("src/main/resources/reports/carnet.jrxml");
+		File inputFile = ResourceUtils.getFile("/reports/carnet.jrxml");
 		
 		InputStream inputStream = new FileInputStream(inputFile.getAbsoluteFile());
 		
