@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carnet" pageWidth="260" pageHeight="500" columnWidth="258" leftMargin="1" rightMargin="1" topMargin="1" bottomMargin="0" uuid="7673045f-c67b-4781-a6f7-f268a753347c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DESA"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="390"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="596"/>
+	<parameter name="PNUP" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT cf.nup, 
+      trim(to_char(cf.cod_categoria,'09'))  cod_categoria,  
+      initcap(lower(ca.des_categoria)) desc_categoria,   
+      f_di_3(per.cod_empresa, per.nup) num_id, 
+      to_char(per.fecha_incorporacion,'dd/mm/yyyy') fecha_afp, 
+      RE_NOMBRE_AFILIADO_FUNC(per.nup, per.cod_combina) nombre_completo, 
+       to_char(per.fecha_incorp_sap,'dd/mm/yyyy')  fecha_incorp_sap,
+       (select valor from parametro_web where nbr_parametro = 'MOUNT_IMAGENES_OPENSHIFT') ruta
+FROM ge_clientes_fidelizacion cf,   
+     ge_categorias_fidelizacion ca, 
+     bfp_persona per 
+WHERE  cf.cod_empresa = ca.cod_empresa   
+AND cf.cod_categoria = ca.cod_categoria   
+AND per.nup = cf.nup  
+AND cf.cod_etapa = 'ACT'   
+AND per.nup = $P{PNUP}]]>
+	</queryString>
+	<field name="NUP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NUP"/>
+		<property name="com.jaspersoft.studio.field.label" value="NUP"/>
+	</field>
+	<field name="COD_CATEGORIA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="COD_CATEGORIA"/>
+		<property name="com.jaspersoft.studio.field.label" value="COD_CATEGORIA"/>
+	</field>
+	<field name="DESC_CATEGORIA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DESC_CATEGORIA"/>
+		<property name="com.jaspersoft.studio.field.label" value="DESC_CATEGORIA"/>
+	</field>
+	<field name="NUM_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NUM_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="NUM_ID"/>
+	</field>
+	<field name="FECHA_AFP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FECHA_AFP"/>
+		<property name="com.jaspersoft.studio.field.label" value="FECHA_AFP"/>
+	</field>
+	<field name="NOMBRE_COMPLETO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NOMBRE_COMPLETO"/>
+		<property name="com.jaspersoft.studio.field.label" value="NOMBRE_COMPLETO"/>
+	</field>
+	<field name="FECHA_INCORP_SAP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FECHA_INCORP_SAP"/>
+		<property name="com.jaspersoft.studio.field.label" value="FECHA_INCORP_SAP"/>
+	</field>
+	<field name="RUTA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="RUTA"/>
+		<property name="com.jaspersoft.studio.field.label" value="RUTA"/>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="499">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image>
+				<reportElement x="-1" y="-11" width="260" height="510" uuid="910b60fb-3b28-493c-99d6-bd2f33aa3a7b"/>
+				<imageExpression><![CDATA[($F{COD_CATEGORIA}.equals("01")  ? $F{RUTA} + "Tarjeta_Azul_2023.jpg" : ($F{COD_CATEGORIA}.equals("02")  ? $F{RUTA} +"Tarjeta_Dorada_2023.jpg" : ($F{COD_CATEGORIA}.equals("03")  ?  $F{RUTA} +"Tarjeta_Platinum_2023.jpg" : $F{RUTA} +"Tarjeta_Naranja_2023.jpg" ) ) )]]></imageExpression>
+			</image>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="37" y="232" width="180" height="20" forecolor="#FFFFFF" uuid="48f327e3-4342-4571-a298-871fdd003ed0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="da68db32-929c-47cb-9ed1-2aafb80c3284"/>
+				</reportElement>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUM_ID}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="38" y="323" width="180" height="20" forecolor="#FFFFFF" uuid="97f38d57-4c76-40c9-831d-420284e20d51">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="145cd039-c4f3-46d8-912c-a763e2df8ff4"/>
+				</reportElement>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_AFP}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="37" y="129" width="180" height="80" forecolor="#FFFFFF" uuid="60989589-c91c-4e59-b971-a145d1872365">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="850738fc-f002-44cf-8a0a-be556051299a"/>
+				</reportElement>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_COMPLETO}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement x="38" y="287" width="180" height="20" forecolor="#FFFFFF" uuid="46241c61-18db-45fa-a8e4-adc45b6f5e78">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a607c82b-fab7-4c6f-941c-f6d863c94d2b"/>
+				</reportElement>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_INCORP_SAP}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

@@ -31,5 +31,19 @@ public class CarnetController {
 		return cDao.saveCarnet(id);
 	}
 	
+	
+	@GetMapping("carnets/imprime/{id}")
+	public String getPrintCarnet(@PathVariable String id) {
+		
+		String reporte;
+		try {
+			reporte = cDao.exportReport(id);
+		} catch (Exception ex) {
+			return "Error: " + ex.toString();
+		}
+		
+		return reporte;
+	}
+	
 
 }

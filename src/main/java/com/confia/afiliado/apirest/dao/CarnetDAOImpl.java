@@ -1,6 +1,12 @@
 package com.confia.afiliado.apirest.dao;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,17 +18,27 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ResourceUtils;
 
 import com.confia.afiliado.apirest.model.Carnet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+
+import javax.xml.bind.DatatypeConverter;
 
 @Repository
 public class CarnetDAOImpl implements CarnetDAO {
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-
+	
 	@Override
 	public String saveCarnet(String id) {
 		
@@ -102,6 +118,31 @@ public class CarnetDAOImpl implements CarnetDAO {
 				+ "AND per.nup = ?";
 		
 		return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<Carnet>(Carnet.class), id);
+	}
+
+	@Override
+	public String exportReport(String id) throws FileNotFoundException, JRException, SQLException {
+		
+		//se obtiene el jrxml que es parte del proyecto
+		File inputFile = ResourceUtils.getFile("src/main/resources/reports/carnet.jrxml");
+		
+		InputStream inputStream = new FileInputStream(inputFile.getAbsoluteFile());
+		
+		JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+		
+		//seteo de parametros
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("PNUP", id);
+		
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcTemplate.getDataSource().getConnection());
+		
+		//se genera el reporte en formato PDF en arreglo de bytes para posteriormente convertirlo a base64
+		byte[] reporteBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+		
+		//conversión de PDF a base64
+		String FileinBase64 = DatatypeConverter.printBase64Binary(reporteBytes);
+		
+		return FileinBase64;
 	}
 
 }
